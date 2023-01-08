@@ -25,6 +25,7 @@ class UserManager(BaseUserManager):
 class User(AbstractUser, PermissionsMixin):
     username = None
     # Identify Information
+    id = models.BigAutoField(primary_key=True)
     email = models.EmailField("Email Address", unique=True, blank=False, null=False)
 
     # Personal Information
@@ -50,3 +51,9 @@ class User(AbstractUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
+    @property
+    def full_name(self):
+        return '%s %s' % (self.first_name, self.last_name)
+
+    
