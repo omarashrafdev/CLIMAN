@@ -144,7 +144,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     ],
     'EXCEPTION_HANDLER': 'climan.utils.custom_exception_handler',
-    'USER_DETAILS_SERIALIZER': 'registration.serializer.UserSerializer'
+    'USER_DETAILS_SERIALIZER': 'registration.serializer.UserSerializer',
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.FormParser',
+        'rest_framework.parsers.MultiPartParser'
+     )
 }
 
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
