@@ -15,7 +15,6 @@ class UsersView(generics.ListAPIView):
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
-    permission_classes = (AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
 
 

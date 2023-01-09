@@ -7,13 +7,18 @@ from climan import settings
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
-
     @classmethod
     def get_token(cls, user):
-        token = super(MyTokenObtainPairSerializer, cls).get_token(user)
+        token = super().get_token(user)
 
-        # Add custom claims
-        token['username'] = user.username
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
+        token['gender'] = user.gender
+        token['email'] = user.email
+        token['status'] = user.status
+        if user.image:
+            token['image'] = user.image.url
+        token['is_superuser'] = user.is_superuser
         return token
 
 
