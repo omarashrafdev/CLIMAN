@@ -55,10 +55,10 @@ export default function Login() {
     }
 
     return (
-        <Flex direction='column' align='center'>
-            <Stack spacing={4}>
-                <Heading>Sign In</Heading>
-                <Text w='300px'>
+        <Flex direction='column' alignItems='center'>
+            <Stack spacing={4} paddingTop='10rem'>
+                <Heading textAlign='center'>Sign In</Heading>
+                <Text w='300px' textAlign='center'>
                     Welcome to CLIMAN, please put your sign in credentials below to start using our services
                 </Text>
 

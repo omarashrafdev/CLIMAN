@@ -84,10 +84,10 @@ export default function Register() {
     }
 
     return (
-        <Flex direction='column' align='center'>
-            <Stack spacing={4}>
-                <Heading>Sign Up</Heading>
-                <Text w='300px'>
+        <Flex direction='column' alignItems='center'>
+            <Stack spacing={4} paddingTop='10rem'>
+                <Heading textAlign='center'>Sign Up</Heading>
+                <Text w='300px' textAlign='center'>
                     Welcome to CLIMAN, please fill out the information below to start using our services
                 </Text>
 
