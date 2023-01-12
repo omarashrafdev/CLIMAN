@@ -12,13 +12,15 @@ export default function Header() {
             backgroundColor='#dee5f190'
             minHeight='64px'
         >
-            <Box display='flex' flexDirection='row'>
-                <Image 
-                    src='./././public/clinic.png' 
-                    boxSize='50px'
-                />
-                <Text fontSize='3xl' fontWeight='500' margin='0px 16px'>CLIMAN</Text>
-            </Box>
+            <Link href='http://localhost:3000/' _hover='none'>
+                <Box display='flex' flexDirection='row'>
+                    <Image 
+                        src='./././public/clinic.png' 
+                        boxSize='50px'
+                    />
+                    <Text fontSize='3xl' fontWeight='500' margin='0px 16px'>CLIMAN</Text>
+                </Box>
+            </Link>
             <Box>
                 <Link href='http://localhost:3000/login'>
                     <ArrowForwardIcon color='#0d53fc' boxSize={7} />

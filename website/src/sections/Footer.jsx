@@ -10,8 +10,10 @@ export default function Footer() {
 
     return (
         <Flex
-            padding='15px 24px' 
+            position='absolute'
             width='100%'
+            bottom='0'
+            padding='15px 24px' 
             flexDirection='column'
             gap='10px'
             backgroundColor='#dee5f190'
@@ -32,9 +34,9 @@ export default function Footer() {
             </Box>
 
             <Box display='flex' flexDirection='row' gap='10px'>
-                <Link href='https://www.facebook.com/omar.ashraf.dev'><FaFacebook color={facebookColor} size='20px' /></Link>
-                <Link href='https://www.instagram.com/omarashrafdev/'><FaInstagram color={instagramColor} size='20px' /></Link>
-                <Link href='https://twitter.com/OmarAshrafDev'><FaTwitter color={twitterColor} size='20px' /></Link>
+                <Link href='https://www.facebook.com/omar.ashraf.dev' target='_blank'><FaFacebook color={facebookColor} size='20px' /></Link>
+                <Link href='https://twitter.com/OmarAshrafDev' target='_blank'><FaTwitter color={twitterColor} size='20px' /></Link>
+                <Link href='https://www.instagram.com/omarashrafdev/' target='_blank'><FaInstagram color={instagramColor} size='20px' /></Link>
             </Box>
 
             <Box display='flex' flexDirection='row' alignItems='center' gap='5px'>
