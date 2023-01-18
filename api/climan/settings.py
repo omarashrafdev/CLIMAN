@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 import os
+import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -22,6 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-%2#bq2&=1j_l!nojsvbfp8arxql9vm8zv%ek7xw&y^!(61ys&v'
+
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -42,6 +48,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
+    'django_rest_passwordreset',
     'climan',
     'registration',
 ]
@@ -140,11 +147,9 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': [
     #     'rest_framework.permissions.IsAuthenticated',
     # ],
-    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
+    ),
     'EXCEPTION_HANDLER': 'climan.utils.custom_exception_handler',
     'USER_DETAILS_SERIALIZER': 'registration.serializer.UserSerializer',
     'DEFAULT_PARSER_CLASSES': [
@@ -181,3 +186,13 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOWED_ORIGIN_REGEXES = [
     'http://localhost:3000',
 ]
+
+# Email
+EMAIL_USE_TLS=True
+EMAIL_HOST='smtp.gmail.com'
+EMAIL_PORT=587
+EMAIL_HOST_USER=env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD=env("EMAIL_HOST_PASSWORD")
+
+BACKEND_DOMAIN = env('BACKEND_DOMAIN')
+FRONTEND_DOMAIN = env('FRONTEND_DOMAIN')
