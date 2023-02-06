@@ -1,7 +1,11 @@
 from django.db import models
-from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.dispatch import receiver
+from django.urls import reverse
+from django_rest_passwordreset.signals import reset_password_token_created
+from django.core.mail import EmailMessage  
+from climan import settings
 
 from .data.choices import Status, Gender, Role, City
 
@@ -63,24 +67,14 @@ class EmailConfirmation(models.Model):
     token = models.CharField(max_length=100)
 
 
-from django.dispatch import receiver
-from django.urls import reverse
-from django_rest_passwordreset.signals import reset_password_token_created
-from django.core.mail import send_mail  
-
-# TODO: Fix Email
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
+    token = reset_password_token.key
+    current_site = settings.BACKEND_DOMAIN
+    relative_url = reverse('password_reset:reset-password-request')
+    absolute_url = current_site+relative_url+'?token='+str(token)
 
-    email_plaintext_message = "{}?token={}".format(reverse('password_reset:reset-password-request'), reset_password_token.key)
-
-    send_mail(
-        # title:
-        "Password Reset for {title}".format(title="Some website title"),
-        # message:
-        email_plaintext_message,
-        # from:
-        "noreply@somehost.local",
-        # to:
-        [reset_password_token.user.email]
-    )
+    subject = 'Reset your password'
+    message = f'Dear {reset_password_token.user.full_name},\n\nClick on the link below to reset your password.\n{absolute_url}\n\nCLIMAN Team\n2023'
+    msg = EmailMessage(subject, message, to=[reset_password_token.user.email])
+    msg.send()
