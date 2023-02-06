@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.models import AbstractUser, BaseUserManager
+
 from .data.choices import Status, Gender, Role, City
 
 
@@ -13,7 +14,7 @@ class UserManager(BaseUserManager):
         user = self.model(email=email, is_staff=is_staff, is_superuser=is_superuser, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
-        return user
+        return email
 
     def create_user(self, email, password, **extra_fields):
         return self._create_user(email, password, False, False, **extra_fields)
@@ -39,7 +40,7 @@ class User(AbstractUser, PermissionsMixin):
     city = models.CharField(max_length=300, choices=City.choices, default=City.CAIRO)
 
     # User Type
-    role = models.CharField(max_length=1, choices=Role.choices, default=Role.ADMIN)
+    role = models.CharField(max_length=1, choices=Role.choices, default=Role.DOCTOR)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
@@ -57,12 +58,17 @@ class User(AbstractUser, PermissionsMixin):
         return '%s %s' % (self.first_name, self.last_name)
 
 
+class EmailConfirmation(models.Model):
+    email = models.EmailField()
+    token = models.CharField(max_length=100)
+
+
 from django.dispatch import receiver
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import send_mail  
 
-
+# TODO: Fix Email
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
 

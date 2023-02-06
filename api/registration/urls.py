@@ -1,7 +1,5 @@
 from django.urls import path, include
-from rest_framework.urlpatterns import format_suffix_patterns
-
-from .views import UsersView, RegisterView, MyObtainTokenPairView, ChangePasswordView, Verify
+from .views import UsersView, RegisterView, MyObtainTokenPairView, ChangePasswordView, VerifyEmailView
 
 
 urlpatterns = [
@@ -13,6 +11,6 @@ urlpatterns = [
     path('change-password', ChangePasswordView.as_view(), name='change-password'),
     path('password-reset/', include('django_rest_passwordreset.urls', namespace='password_reset')),
 
-    path('verify', Verify.as_view())
+    path('verify-email/', VerifyEmailView.as_view(), name='verify-email'),
 ]
 

@@ -2,8 +2,11 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import User
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import EmailConfirmation, User
+from .utils import Util
 from climan import settings
+from django.urls import reverse
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -55,6 +58,14 @@ class UserRegisterSerializer(serializers.Serializer):
         user.set_password(validated_data['password'])
         user.save()
 
+        token = RefreshToken.for_user(user).access_token
+
+        current_site = settings.BACKEND_DOMAIN
+        relative_url = reverse('verify-email')
+        absolute_url = current_site+relative_url+'?token='+str(token)
+
+        Util.send_verification_email(user, absolute_url)
+
         return user
 
 
@@ -80,3 +91,5 @@ class ChangePasswordSerializer(serializers.Serializer):
     model = User
     password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
+
+

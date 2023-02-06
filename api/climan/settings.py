@@ -10,8 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+import datetime
 import os
-import environ
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -24,11 +24,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-%2#bq2&=1j_l!nojsvbfp8arxql9vm8zv%ek7xw&y^!(61ys&v'
 
-env = environ.Env(
-    # set casting, default value
-    DEBUG=(bool, False)
-)
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -39,16 +34,19 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'corsheaders',
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt.token_blacklist',
     'django_rest_passwordreset',
+
     'climan',
     'registration',
 ]
@@ -158,6 +156,11 @@ REST_FRAMEWORK = {
     'DEFAULT_METADATA_CLASS': None,
 }
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': datetime.timedelta(minutes=5),
+    'REFRESH_TOKEN_LIFETIME': datetime.timedelta(days=1),
+}
+
 ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
@@ -168,8 +171,16 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 ACCOUNT_EMAIL_CONFIRMATION_ANONYMOUS_REDIRECT_URL = '/?verification=1'
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/?verification=1'
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+
 SITE_ID = 1
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 if DEBUG:
     # the default value
@@ -188,11 +199,15 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 ]
 
 # Email
-EMAIL_USE_TLS=True
-EMAIL_HOST='smtp.gmail.com'
-EMAIL_PORT=587
-EMAIL_HOST_USER=env("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD=env("EMAIL_HOST_PASSWORD")
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
+SERVER_EMAIL = os.environ.get('EMAIL_HOST_USER')
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
-BACKEND_DOMAIN = env('BACKEND_DOMAIN')
-FRONTEND_DOMAIN = env('FRONTEND_DOMAIN')
+
+BACKEND_DOMAIN = os.environ.get('BACKEND_DOMAIN')
+FRONTEND_DOMAIN = os.environ.get('FRONTEND_DOMAIN')
