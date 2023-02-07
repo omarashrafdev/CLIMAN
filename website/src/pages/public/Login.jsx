@@ -76,7 +76,7 @@ export default function Login() {
                                         id='email'
                                         placeholder='Email Address' 
                                         h='50px' 
-                                        borderRadius='15px' 
+                                        borderRadius='15px'
                                         focusBorderColor='#0d53fc' 
                                         onChange={(e) => { setEmail(e.target.value) }}
                                         required
