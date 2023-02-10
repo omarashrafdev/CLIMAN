@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom"
 import UnderMaintenance from "./pages/UnderMaintenance"
-import OldLogin from "./pages/public/OldLogin"
 import Register from "./pages/public/Register"
 import Home from "./pages/public/Home"
 import WebsiteIndex from './layouts/Index'

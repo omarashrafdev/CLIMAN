@@ -22,10 +22,9 @@ import {
   Alert,
   AlertIcon,
   AlertTitle,
-  AlertDescription,
 } from "@chakra-ui/react";
 import { OAuthButtonGroup } from "../../components/OAuthButtonGroup";
-import { useState, forwardRef, useRef } from "react";
+import { useState, useRef } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useNavigate } from "react-router-dom"
 

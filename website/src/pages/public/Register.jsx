@@ -1,197 +1,342 @@
-import { useState } from 'react'
-import { FormControl, InputRightElement, FormErrorMessage, FormHelperText, Input, InputGroup, Stack} from '@chakra-ui/react'
-import { Flex, Center, Text, Button, Heading } from '@chakra-ui/react'
-import { ViewOffIcon, ViewIcon } from '@chakra-ui/icons'
-import { Alert, AlertIcon, AlertTitle } from '@chakra-ui/react'
-
+import {
+  Image,
+  Box,
+  Button,
+  Link,
+  Checkbox,
+  Container,
+  Divider,
+  FormControl,
+  FormLabel,
+  Heading,
+  HStack,
+  Input,
+  Stack,
+  Text,
+  Center,
+  IconButton,
+  InputGroup,
+  InputRightElement,
+  useDisclosure,
+  useMergeRefs,
+  Alert,
+  AlertIcon,
+  AlertTitle,
+} from "@chakra-ui/react";
+import { OAuthButtonGroup } from "../../components/OAuthButtonGroup";
+import { useState, useRef } from "react";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import { useNavigate } from "react-router-dom"
 
 export default function Register() {
-    const [show, setShow] = useState(false)
-    const showPassword = () => setShow(!show)
-    const [err, setErr] = useState('')
-    const [firstName, setFirstName] = useState("")
-    const [lastName, setLastName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [passwordConfirm, setPasswordConfirm] = useState("")
+  const navigate = useNavigate();
 
-    // Errors vars
-    const [firstNameBlankError, setFirstNameBlankError] = useState(false)
-    const [lastNameBlankError, setLastNameBlankError] = useState(false)
-    const [emailBlankError, setEmailBlankError] = useState(false)
-    const [passwordBlankError, setPasswordBlankError] = useState(false)
-    const [passwordConfirmBlankError, setPasswordConfirmBlankError] = useState(false)
+  const { isOpen, onToggle } = useDisclosure()
+  const inputRef = useRef(null)
+  const mergeRef = useMergeRefs(inputRef)
+  const onClickReveal = () => {
+    onToggle()
+    if (inputRef.current) {
+      inputRef.current.focus({
+        preventScroll: true,
+      });
+    }
+  };
 
-    async function handleSubmit(event) {
-        event.preventDefault();
+  const [err, setErr] = useState("");
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordConfirm, setPasswordConfirm] = useState("")
 
-        // Reset Errors
-        setErr('')
-        setFirstNameBlankError(false)
-        setLastNameBlankError(false)
-        setEmailBlankError(false)
-        setPasswordBlankError(false)
-        setPasswordConfirmBlankError(false)
+  // Errors vars
+  const [firstNameBlankError, setFirstNameBlankError] = useState(false)
+  const [lastNameBlankError, setLastNameBlankError] = useState(false)
+  const [emailBlankError, setEmailBlankError] = useState(false)
+  const [passwordBlankError, setPasswordBlankError] = useState(false)
+  const [passwordConfirmBlankError, setPasswordConfirmBlankError] = useState(false)
 
-        if (firstName == '') {
-            setFirstNameBlankError(true)
-            return
-        }
-        if (lastName == '') {
-            setLastNameBlankError(true)
-            return
-        }
-        if (email == '') {
-            setEmailBlankError(true)
-            return
-        }
-        if (password == '') {
-            setPasswordBlankError(true)
-            return
-        }
-        if (passwordConfirm == '') {
-            setPasswordConfirmBlankError(true)
-            return
-        }
+  async function handleSubmit(event) {
+    event.preventDefault();
 
-        // Password validation
-        if (!(password === passwordConfirm)) {
-            setErr('Passwords Doesn\'t match')
-            return
-        }
+    // Reset Errors
+    setErr("")
+    setFirstNameBlankError(false)
+    setLastNameBlankError(false)
+    setEmailBlankError(false)
+    setPasswordBlankError(false)
+    setPasswordConfirmBlankError(false)
 
-        const response = await fetch(`http://localhost:8000/register`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                "email": email,
-                "first_name": firstName,
-                "last_name": lastName,
-                "password": password,
-                "password2": passwordConfirm
-            }),
-        });
-        if (response.status == 201) {
-            // TODO: Redirect to home page
-            setErr('Signed up')
-            return
-        }
-        if (response.status == 401) {
-            setErr("Invalid information")
-        }
+    if (firstName == "") {
+      setFirstNameBlankError(true)
+      return
+    }
+    if (lastName == "") {
+      setLastNameBlankError(true)
+      return
+    }
+    if (email == "") {
+      setEmailBlankError(true)
+      return
+    }
+    if (password == "") {
+      setPasswordBlankError(true)
+      return
+    }
+    if (passwordConfirm == '') {
+      setPasswordConfirmBlankError(true)
+      return
     }
 
-    return (
-        <Flex direction='column' alignItems='center'>
-            <Stack spacing={4} paddingTop='10rem'>
-                <Heading textAlign='center'>Sign Up</Heading>
-                <Text w='300px' textAlign='center'>
-                    Welcome to CLIMAN, please fill out the information below to start using our services
-                </Text>
+    // Password validation
+    if (!(password === passwordConfirm)) {
+      console.log('Stuck')
+      setErr('Passwords doesn\'t match')
+      return
+    }
 
+    await fetch(`http://localhost:8000/register`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        'first_name': firstName,
+        'last_name': lastName,
+        email,
+        password,
+        'password2': passwordConfirm
+      }),
+    }).then(response => {
+      if(!response.ok) {
+        return response.text().then(text => { throw new Error(text) })
+       }
+      else {
+        navigate("/")
+        return
+     }    
+    }).catch(err => {
+      const responseError = JSON.parse((err.message))
+      if (responseError.email) {
+        if (responseError.email[0] === 'This field must be unique.')
+        {
+          setErr('Email address already in use.');
+          return
+        }
+        setErr(responseError.email[0]);
+        return
+      }
+      if (responseError.password) {
+        setErr(responseError.password[0]);
+        return
+      }
+      if (responseError.password2) {
+        setErr(responseError.password2[0]);
+        return
+      }
+      else {
+        setErr('Something went wrong!');
+      }
+    });
+  }
 
-                {err && 
-                    <Alert status='error' w='300px' borderRadius='15px'>
-                        <AlertIcon />
-                        <AlertTitle>{err}</AlertTitle>
-                    </Alert>
-                }
-                <Center w='300px'>
-                    <FormControl>
-                            <Stack spacing={2}>
-                                <FormControl isInvalid={firstNameBlankError}>
-                                    <Input 
-                                        id='first_name'
-                                        placeholder='First Name' 
-                                        h='50px' 
-                                        borderRadius='15px' 
-                                        focusBorderColor='#0d53fc' 
-                                        onChange={(e) => { setFirstName(e.target.value) }}
-                                        required
-                                    />
-                                    { firstNameBlankError && 
-                                        <FormErrorMessage>First name is required.</FormErrorMessage>
-                                    }
-                                </FormControl>
-                                <FormControl isInvalid={lastNameBlankError}>
-                                    <Input 
-                                        id='last_name'
-                                        placeholder='Last Name' 
-                                        h='50px' 
-                                        borderRadius='15px' 
-                                        focusBorderColor='#0d53fc' 
-                                        onChange={(e) => { setLastName(e.target.value) }}
-                                        required
-                                    />
-                                    { lastNameBlankError && 
-                                        <FormErrorMessage>Last name is required.</FormErrorMessage>
-                                    }
-                                </FormControl>
-                                <FormControl isInvalid={emailBlankError}>
-                                    <Input 
-                                        id='email'
-                                        placeholder='Email Address' 
-                                        type='email'
-                                        h='50px' 
-                                        borderRadius='15px' 
-                                        focusBorderColor='#0d53fc' 
-                                        onChange={(e) => { setEmail(e.target.value) }}
-                                        required
-                                    />
-                                    { emailBlankError && 
-                                        <FormErrorMessage>Email is required.</FormErrorMessage>
-                                    }
-                                </FormControl>
-                                <InputGroup>
-                                    <FormControl isInvalid={passwordBlankError}>
-                                        <Input 
-                                            id='password'
-                                            type={show ? 'text' : 'password'} 
-                                            placeholder='Password' h='50px' 
-                                            borderRadius='15px' 
-                                            focusBorderColor='#0d53fc'
-                                            onChange={(e) => { setPassword(e.target.value) }}
-                                        />
-                                        <InputRightElement width='50px' height='50px'>
-                                            <Button width='30px' size='sm' onClick={showPassword}>
-                                            {show ? <ViewOffIcon color='#0d53fc' /> : <ViewIcon color='#0d53fc' />}
-                                            </Button>
-                                        </InputRightElement>
-                                        { passwordBlankError && 
-                                            <FormErrorMessage>Password is required</FormErrorMessage>
-                                        }
-                                    </FormControl>
-                                </InputGroup>
-                                <InputGroup>
-                                    <FormControl isInvalid={passwordConfirmBlankError}>
-                                        <Input 
-                                            id='password'
-                                            type={show ? 'text' : 'password'} 
-                                            placeholder='Confirm Password' h='50px' 
-                                            borderRadius='15px' 
-                                            focusBorderColor='#0d53fc'
-                                            onChange={(e) => { setPasswordConfirm(e.target.value) }}
-                                        />
-                                        { passwordConfirmBlankError && 
-                                            <FormErrorMessage>Password is required</FormErrorMessage>
-                                        }
-                                    </FormControl>
-                                </InputGroup>
-                                <Button 
-                                    colorScheme='blue' 
-                                    onClick={handleSubmit} 
-                                    type='submit' 
-                                    borderRadius='15px' 
-                                    bgColor='#0d53fc'
-                                >
-                                    Create Account
-                                </Button>
-                            </Stack>
-                    </FormControl>
-                </Center>
+  return (
+    <Container
+      maxW="lg"
+      py={{
+        base: "12",
+        md: "24",
+      }}
+      px={{
+        base: "0",
+        sm: "8",
+      }}
+    >
+      <Stack spacing="8">
+        <Stack spacing="6">
+          <Center>
+            <Image boxSize="75px" src="./clinic.png" alt="Logo" />
+          </Center>
+          <Stack
+            spacing={{
+              base: "2",
+              md: "3",
+            }}
+            textAlign="center"
+          >
+            <Heading
+              size={{
+                base: "xl",
+              }}
+            >
+              Register a new account
+            </Heading>
+            <HStack spacing="1" justify="center">
+              <Text color="muted">Already have an account?</Text>
+              <Link href="/login" textColor="blue">
+                Sign in
+              </Link>
+            </HStack>
+          </Stack>
+        </Stack>
+        <Box
+          py={{
+            base: "0",
+            sm: "8",
+          }}
+          px={{
+            base: "4",
+            sm: "10",
+          }}
+          bg={{
+            base: "transparent",
+            sm: "bg-surface",
+          }}
+          boxShadow={{
+            base: "none",
+            sm: "md",
+          }}
+          borderRadius={{
+            base: "none",
+            sm: "xl",
+          }}
+        >
+          <Stack spacing="6">
+            {err && (
+              <Alert status="error" textAlign="center">
+                <AlertIcon />
+                <AlertTitle>{err}</AlertTitle>
+              </Alert>
+            )}
+            <Stack spacing="5">
+              {
+                // First Name Input Field
+              }
+              <FormControl>
+                <FormLabel htmlFor="email">First name</FormLabel>
+                <Input
+                  id="first_name"
+                  type="text"
+                  onChange={(e) => {
+                    setFirstName(e.target.value);
+                  }}
+                  borderColor={firstNameBlankError ? "red" : "inherit"}
+                  required
+                />
+                {firstNameBlankError && <Text color="red">First name is required</Text>}
+              </FormControl>
+
+              {
+                // Last Name Input Field
+              }
+              <FormControl>
+                <FormLabel htmlFor="email">Last name</FormLabel>
+                <Input
+                  id="last_name"
+                  type="text"
+                  onChange={(e) => {
+                    setLastName(e.target.value);
+                  }}
+                  borderColor={lastNameBlankError ? "red" : "inherit"}
+                  required
+                />
+                {lastNameBlankError && <Text color="red">Last name is required</Text>}
+              </FormControl>
+
+              {
+                // Email Input Field
+              }
+              <FormControl>
+                <FormLabel htmlFor="email">Email</FormLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                  }}
+                  borderColor={emailBlankError ? "red" : "inherit"}
+                  required
+                />
+                {emailBlankError && <Text color="red">Email is required</Text>}
+              </FormControl>
+
+              {
+                // Password Input Field
+              }
+              <FormControl>
+                <FormLabel htmlFor="password">Password</FormLabel>
+                <InputGroup>
+                  <InputRightElement>
+                    <IconButton
+                      variant="link"
+                      aria-label={isOpen ? "Mask password" : "Reveal password"}
+                      icon={isOpen ? <HiEyeOff /> : <HiEye />}
+                      onClick={onClickReveal}
+                    />
+                  </InputRightElement>
+                  <Input
+                    id="password"
+                    ref={mergeRef}
+                    name="password"
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                    }}
+                    type={isOpen ? "text" : "password"}
+                    borderColor={passwordBlankError ? "red" : "inherit"}
+                    autoComplete="current-password"
+                    required
+                  />
+                </InputGroup>
+                {passwordBlankError && (
+                  <Text color="red">Password is required</Text>
+                )}
+              </FormControl>
+
+              {
+                // Confirm Password Input Field
+              }
+              <FormControl>
+                <FormLabel htmlFor="password">Confirm password</FormLabel>
+                <InputGroup>
+                  <Input
+                    id="password2"
+                    ref={mergeRef}
+                    name="password"
+                    onChange={(e) => {
+                      setPasswordConfirm(e.target.value);
+                    }}
+                    type={isOpen ? "text" : "password"}
+                    borderColor={passwordConfirmBlankError ? "red" : "inherit"}
+                    autoComplete="current-password"
+                    required
+                  />
+                </InputGroup>
+                {passwordConfirmBlankError && (
+                  <Text color="red">Password confirm is required</Text>
+                )}
+              </FormControl>
             </Stack>
-        </Flex>
-    )
+
+            {
+              // Sign in options
+            }
+            <Stack spacing="6">
+              <Button onClick={handleSubmit} type="submit">
+                Register
+              </Button>
+              <HStack>
+                <Divider />
+                <Text fontSize="sm" whiteSpace="nowrap" color="muted">
+                  or continue with
+                </Text>
+                <Divider />
+              </HStack>
+              <OAuthButtonGroup />
+            </Stack>
+          </Stack>
+        </Box>
+      </Stack>
+    </Container>
+  );
 }
