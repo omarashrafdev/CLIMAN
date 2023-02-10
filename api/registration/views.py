@@ -2,6 +2,7 @@ import jwt
 from rest_framework import status, generics
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from verify_email.email_handler import send_verification_email
 from django.conf import settings
@@ -16,6 +17,17 @@ class UsersView(generics.ListAPIView):
     serializer_class = UserSerializer
 
 
+class UserView(generics.ListAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = UserSerializer
+
+    def get_queryset(self):
+        user_id = self.kwargs['pk']
+        user_object = User.objects.filter(id=user_id)
+        return user_object
+
+
 class MyObtainTokenPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
@@ -24,6 +36,23 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = UserRegisterSerializer
+
+
+class AddInformationView(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    serializer_class = UserSerializer
+    lookup_field = 'pk'
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"message": "Information Updated successfully."})
+        else:
+            return Response({"message": "failed", "details": serializer.errors})
 
 
 class ChangePasswordView(generics.UpdateAPIView):
