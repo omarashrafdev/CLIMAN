@@ -70,7 +70,7 @@ class EmailConfirmation(models.Model):
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
     token = reset_password_token.key
-    current_site = settings.BACKEND_DOMAIN
+    current_site = settings.FRONTEND_DOMAIN
     relative_url = reverse('password_reset:reset-password-request')
     absolute_url = current_site+relative_url+'?token='+str(token)
 
