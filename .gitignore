@@ -134,3 +134,4 @@ climan/migrations/
 registration/migrations/
 node_modules/
 api/climanenv/
+api/climan/media/images/
