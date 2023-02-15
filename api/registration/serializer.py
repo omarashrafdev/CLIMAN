@@ -16,12 +16,12 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
 
         token['first_name'] = user.first_name
         token['last_name'] = user.last_name
+        token['full_name'] = user.full_name
         token['gender'] = user.gender
         token['email'] = user.email
         token['status'] = user.status
         if user.image:
             token['image'] = user.image.url
-        token['is_superuser'] = user.is_superuser
         return token
 
 

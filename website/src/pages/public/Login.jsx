@@ -24,12 +24,15 @@ import {
   AlertTitle,
 } from "@chakra-ui/react";
 import { OAuthButtonGroup } from "../../components/OAuthButtonGroup";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useNavigate } from "react-router-dom"
+import AuthContext from "../../context/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
+
+  let {loginUser} = useContext(AuthContext)
 
   const { isOpen, onToggle } = useDisclosure();
   const inputRef = useRef(null);
@@ -53,39 +56,28 @@ export default function Login() {
 
   async function handleSubmit(event) {
     event.preventDefault();
-
+    
     // Reset Errors
     setErr("");
     setEmailBlankError(false);
     setPasswordBlankError(false);
-
+    
     if (email == "") {
-      console.log("email is required");
-      setEmailBlankError(true);
+        setEmailBlankError(true);
+        return;
+      }
+      if (password == "") {
+          setPasswordBlankError(true);
       return;
     }
-    if (password == "") {
-      setPasswordBlankError(true);
-      return;
-    }
+    
+    const response = await loginUser(event, email, password)
 
-    const response = await fetch(`http://localhost:8000/token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    });
-    if (response.status == 200) {
-      // TODO: Redirect to home page
-      navigate("/");
-      return
+    if(response.status == 200) {
+      navigate('/')
     }
-    else {
-      setErr("Invalid email or password");
+    else if (response.status == 401) {
+      setErr(response.message)
     }
   }
 

@@ -1,8 +1,11 @@
 import { Image, Text, Flex, Box, Link } from '@chakra-ui/react'
-import { ArrowForwardIcon } from '@chakra-ui/icons'
+import { ArrowForwardIcon, CloseIcon } from '@chakra-ui/icons'
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
 
 export default function Header() {
+    let {user, logoutUser} = useContext(AuthContext)
     return (
         <Flex 
             padding='0px 24px' 
@@ -22,9 +25,15 @@ export default function Header() {
                 </Box>
             </Link>
             <Box>
-                <Link href='http://localhost:3000/login'>
-                    <ArrowForwardIcon color='#0d53fc' boxSize={7} />
-                </Link>
+                {user ? 
+                    <Link onClick={logoutUser}>
+                        <CloseIcon color='#0d53fc' boxSize={7} />
+                    </Link>
+                :
+                    <Link href='http://localhost:3000/login'>
+                        <ArrowForwardIcon color='#0d53fc' boxSize={7} />
+                    </Link>
+                }
             </Box>
         </Flex>
     )

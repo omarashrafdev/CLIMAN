@@ -1,9 +1,13 @@
 import { Box, Button, Container, Heading, Text, Image } from "@chakra-ui/react";
+import { useContext } from "react";
+import AuthContext from "../../context/AuthContext";
 
 export default function Home() {
+    let user = useContext(AuthContext).user
     return (
         <Container padding='40px 10px' maxW='85%' position='relative' minHeight='100vh'>
-            <Heading textAlign='center' fontSize='4em'>Clinic Management System</Heading>
+            {/* <Heading textAlign='center' fontSize='4em'>Clinic Management System</Heading> */}
+            {user && <Heading textAlign='center' fontSize='4em'>Hi {user.full_name}</Heading> }
             <Box
                 display='flex' 
                 flexDirection='row'
