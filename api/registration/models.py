@@ -71,7 +71,7 @@ class EmailConfirmation(models.Model):
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
     token = reset_password_token.key
     current_site = settings.FRONTEND_DOMAIN
-    relative_url = reverse('password_reset:reset-password-request')
+    relative_url = '/forget-password'
     absolute_url = current_site+relative_url+'?token='+str(token)
 
     subject = 'Reset your password'
