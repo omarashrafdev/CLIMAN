@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Role(models.TextChoices):
+class Type(models.TextChoices):
     ADMIN = 'A'
     DOCTOR = 'D'
     PATIENT = 'P'

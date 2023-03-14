@@ -22,13 +22,9 @@ export default function Router() {
             <Route path="forget-password" element={<ForgetPassword />} />
         </Route>
 
-        {
-            // TODO: Allow only for users
-        }
         <Route path="/" element={<PrivateRoute />}>
             <Route path="complete-profile" element={<CompleteProfile />} />
             <Route path="change-password" element={<UnderMaintenance />} />
-            <Route path="test" element={<UnderMaintenance/>} />
         </Route>
     </Routes>
   );

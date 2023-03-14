@@ -7,7 +7,7 @@ from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import EmailMessage  
 from climan import settings
 
-from .data.choices import Status, Gender, Role, City
+from .data.choices import Status, Gender, Type, City
 
 
 class UserManager(BaseUserManager):
@@ -44,7 +44,7 @@ class User(AbstractUser, PermissionsMixin):
     city = models.CharField(max_length=300, choices=City.choices, default=City.CAIRO)
 
     # User Type
-    role = models.CharField(max_length=1, choices=Role.choices, default=Role.DOCTOR)
+    type = models.CharField(max_length=1, choices=Type.choices, default=Type.DOCTOR)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
