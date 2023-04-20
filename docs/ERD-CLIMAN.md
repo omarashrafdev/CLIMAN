@@ -45,6 +45,11 @@ We'll need at least the following entities to implement the service:
 |       Type        |     STRING     |
 |      Status       |     STRING     |
 |    RegisterDate   |      DATE      |
+|    PatientsIds    |  STRING/UUID   |
+- **Gender** [MALE (M), FEMALE (F)]
+- **City** [ALEXANDRIA (Alexandria), ASWAN (Aswan), ASYUT (Asyut), BEHEIRA (Beheira), BENI_SUEF (Beni Suef), CAIRO (Cairo), DAKAHLIA (Dakahlia), DAMIETTA (Damietta), FAIYUM (Faiyum), GHARBIA (Gharbia), GIZA (Giza), ISMAILIA (Ismailia), KAFR_EL_SHEIKH (Kafr El Sheikh), LUXOR (Luxor), MATRUH (Matruh), MINYA (Minya), MONUFIA (Monufia), NEW_VALLEY (New Valley), NORTH_SINAI (North Sinai), PORT_SAID (Port Said), QALYUBIA (Qalyubia), QENA (Qena), RED_SEA (Red Sea), SHARQIA (Sharqia), SOHAG (Sohag), SOUTH_SINAI (South Sinai), SUEZ (Suez)]
+- **Type** [DOCTOR (D), PATIENT (P)]
+- **Status** [NEW (N), VERIFIED (V), SUSPENDED (S)]
 
 **Appointments**
 |       Column      |      Type      |
@@ -53,9 +58,11 @@ We'll need at least the following entities to implement the service:
 |     DoctorId      |  STRING/UUID   |
 |     PatientId     |  STRING/UUID   |
 |     Treatment     |     STRING     |
+|    Description    |     STRING     |
 |       Date        |      DATE      |
 |       Time        |   TIMESTAMP    |
-|      status       |     STRING     |
+|      Status       |     STRING     |
+- **Status** [SCHEDULED (S), DONE (D), CANCELED (D)]
 
 **AppointmentsRequests**
 |       Column      |      Type      |
@@ -64,9 +71,11 @@ We'll need at least the following entities to implement the service:
 |     DoctorId      |  STRING/UUID   |
 |     PatientId     |  STRING/UUID   |
 |     Treatment     |     STRING     |
+|    Description    |     STRING     |
 |       Date        |      DATE      |
 |       Time        |   TIMESTAMP    |
-|      status       |     STRING     |
+|      Status       |     STRING     |
+- **Status** [PENDING (P), ACCEPTED (A), DECLINED (D)]
 
 **PatientNotes**
 |       Column      |      Type      |
