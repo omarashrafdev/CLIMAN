@@ -6,6 +6,7 @@ from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import EmailMessage  
 from climan import settings
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .data.choices import Status, Gender, Type, City
 
@@ -32,13 +33,25 @@ class User(AbstractUser, PermissionsMixin):
     # Identify Information
     id = models.BigAutoField(primary_key=True)
     email = models.EmailField("Email Address", unique=True, blank=False, null=False)
+    
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
 
+    objects = UserManager()
+
+    @property
+    def full_name(self):
+        return '%s %s' % (self.first_name, self.last_name)
+
+class UserInformation(models.Model):
+    
     # Personal Information
+    UserId = models.BigAutoField(primary_key=True)
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
     gender = models.CharField(max_length=1, choices=Gender.choices, default=Gender.MALE)
     image = models.ImageField(null=True, blank=True, upload_to='images')
-    phone = models.CharField(max_length=11, null=True, blank=True, unique=True)
+    phone = PhoneNumberField()
     birthdate = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=300, blank=True, null=True)
     city = models.CharField(max_length=300, choices=City.choices, default=City.CAIRO)
@@ -51,15 +64,6 @@ class User(AbstractUser, PermissionsMixin):
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.NEW)
     date_joined = models.DateTimeField(auto_now_add=True)
 
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
-
-    objects = UserManager()
-
-    @property
-    def full_name(self):
-        return '%s %s' % (self.first_name, self.last_name)
 
 
 class EmailConfirmation(models.Model):

@@ -57,6 +57,7 @@ INSTALLED_APPS = [
 
     'climan',
     'registration',
+    "phonenumber_field",
 ]
 
 

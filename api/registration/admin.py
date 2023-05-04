@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import User
+from .models import User, UserInformation
 from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 
 # Register your models here.
 admin.site.register(User)
+admin.site.register(UserInformation)
 class UserAdmin(DjangoUserAdmin):
     """Define admin model for custom User model with no email field."""
 
