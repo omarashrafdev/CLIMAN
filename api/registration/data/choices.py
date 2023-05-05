@@ -46,3 +46,10 @@ class City(models.TextChoices):
     SOHAG = "Sohag"
     SOUTH_SINAI = "South Sinai"
     SUEZ = "Suez"
+
+
+class AppointmentStatus(models.TextChoices):
+    Scheduled = 'S'
+    Done = 'D'
+    Canceled = 'C'
+     

@@ -2,6 +2,9 @@ from django.urls import path, include
 from .views import UsersView, RegisterView, MyObtainTokenPairView, ChangePasswordView, VerifyEmailView, AddInformationView, UserView
 from rest_framework_simplejwt.views import TokenRefreshView
 
+# importing views to reduces cluster in the import section
+from . import views
+
 
 urlpatterns = [
     path('users', UsersView.as_view(), name='users-data'),
@@ -18,5 +21,12 @@ urlpatterns = [
     path('password-reset/', include('django_rest_passwordreset.urls', namespace='password-reset')),
 
     path('verify-email/', VerifyEmailView.as_view(), name='verify-email'),
+
+
+    # endpoints
+    path('notes/<int:id>/', views.get_notes, name='get_notes'),
+    path('notes/<int:id>/', views.create_note, name='create_note'),
+    path('notes/<int:id>/', views.update_note, name='update_note'),
+    path('notes/<int:id>/', views.delete_note, name='delete_note'),
 ]
 

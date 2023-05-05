@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.password_validation import validate_password
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import EmailConfirmation, User
+from .models import EmailConfirmation, User,Appointments
 from .utils import Util
 from climan import settings
 from django.urls import reverse
@@ -92,4 +92,7 @@ class ChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
 
-
+class AppointmentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Appointments
+        fields = ['id', 'doctor', 'description', 'date', 'time']
