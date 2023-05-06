@@ -53,7 +53,7 @@ class UserInformation(models.Model):
     register_date = models.DateField(auto_now_add=True)
     address = models.CharField(max_length=300, blank=True, null=True)
     city = models.CharField(max_length=300, choices=City.choices)
-    patients = models.ForeignKey(User)
+    patients = models.ForeignKey(User, on_delete=models.PROTECT, )
     # User Type
     type = models.CharField(max_length=1, choices=Type.choices, default=Type.DOCTOR)
     is_staff = models.BooleanField(default=False)
