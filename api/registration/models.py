@@ -6,7 +6,8 @@ from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
 from django.core.mail import EmailMessage  
 from climan import settings
-from phonenumber_field.modelfields import PhoneNumberField
+from django.core.validators import RegexValidator
+
 
 from .data.choices import Status, Gender, Type, City
 
@@ -51,7 +52,8 @@ class UserInformation(models.Model):
     last_name = models.CharField(max_length=30, blank=True, null=True)
     gender = models.CharField(max_length=1, choices=Gender.choices, default=Gender.MALE)
     image = models.ImageField(null=True, blank=True, upload_to='images')
-    phone = PhoneNumberField()
+    phone_regex = RegexValidator(regex=r'^\+20\d{9,15}$', message="Phone number must be entered in the format: '+20123456789'. Up to 15 digits allowed.")
+    phone = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     birthdate = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=300, blank=True, null=True)
     city = models.CharField(max_length=300, choices=City.choices, default=City.CAIRO)
