@@ -9,4 +9,3 @@ six==1.16
 Django-Verify-Email==2.0.3
 django-rest-auth
 django-allauth
-django-phonenumber-field

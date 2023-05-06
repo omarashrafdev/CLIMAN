@@ -40,21 +40,17 @@ class User(AbstractUser, PermissionsMixin):
 
     objects = UserManager()
 
-    @property
-    def full_name(self):
-        return '%s %s' % (self.first_name, self.last_name)
-
 class UserInformation(models.Model):
     
     # Personal Information
-    UserId = models.BigAutoField(primary_key=True)
+    UserId = models.ForeignKey(User)
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
     gender = models.CharField(max_length=1, choices=Gender.choices, default=Gender.MALE)
     image = models.ImageField(null=True, blank=True, upload_to='images')
     phone_regex = RegexValidator(regex=r'^\+20\d{9,15}$', message="Phone number must be entered in the format: '+20123456789'. Up to 15 digits allowed.")
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True)
-    birthdate = models.DateField(null=True, blank=True)
+    register_date = models.DateField(null=True, blank=True)
     address = models.CharField(max_length=300, blank=True, null=True)
     city = models.CharField(max_length=300, choices=City.choices, default=City.CAIRO)
 
@@ -65,6 +61,10 @@ class UserInformation(models.Model):
 
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.NEW)
     date_joined = models.DateTimeField(auto_now_add=True)
+    
+    @property
+    def full_name(self):
+        return '%s %s' % (self.first_name, self.last_name)
 
 
 
