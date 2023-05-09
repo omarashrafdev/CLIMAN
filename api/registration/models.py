@@ -43,7 +43,7 @@ class User(AbstractUser, PermissionsMixin):
 class UserInformation(models.Model):
     
     # Personal Information
-    user = models.ForeignKey(User, on_delete=models.CASCADE, )
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="User")
     first_name = models.CharField(max_length=30, blank=True, null=True)
     last_name = models.CharField(max_length=30, blank=True, null=True)
     gender = models.CharField(max_length=1, choices=Gender.choices)
@@ -51,13 +51,12 @@ class UserInformation(models.Model):
     phone_regex = RegexValidator(regex=r'^\+20\d{9,15}$', message="Phone number must be entered in the format: '+20123456789'. Up to 15 digits allowed.")
     phone = models.CharField(validators=[phone_regex], max_length=17, blank=True)
     register_date = models.DateField(auto_now_add=True)
+    birthdate = models.DateField()
     address = models.CharField(max_length=300, blank=True, null=True)
     city = models.CharField(max_length=300, choices=City.choices)
-    patients = models.ForeignKey(User, on_delete=models.PROTECT, )
+    patients = models.ForeignKey(User, on_delete=models.PROTECT, related_name="patient")
     # User Type
-    type = models.CharField(max_length=1, choices=Type.choices, default=Type.DOCTOR)
-    is_staff = models.BooleanField(default=False)
-    is_superuser = models.BooleanField(default=False)
+    type = models.CharField(max_length=1, choices=Type.choices)
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.NEW)
     
     @property
