@@ -2,14 +2,12 @@ from django.db import models
 
 
 class Type(models.TextChoices):
-    ADMIN = 'A'
     DOCTOR = 'D'
     PATIENT = 'P'
 
 class Status(models.TextChoices):
     NEW = 'N'
     VERIFIED = 'V'
-    ACTIVE = 'A'
     SUSPENDED = 'S'
 
 
