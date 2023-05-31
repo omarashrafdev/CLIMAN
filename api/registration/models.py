@@ -12,24 +12,23 @@ from .data.choices import Status, Gender, Type, City
 
 
 class UserManager(BaseUserManager):
-    def _create_user(self, email, password, is_staff, is_superuser, **extra_fields):
-        with transaction.atomic():
-            if not email:
-                raise ValueError('The given email must be set')
-            email = self.normalize_email(email)
-            user = self.model(email=email, is_staff=is_staff, is_superuser=is_superuser, **extra_fields)
-            user.set_password(password)
-            user.save(using=self._db)
+    def _create_user(self, email, first_name, last_name, password, is_staff, is_superuser, **extra_fields):
+        if not email:
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, is_staff=is_staff, is_superuser=is_superuser, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
 
-            user_information = UserInformation.objects.create(user=user)
+        user_information = UserInformation.objects.create(user=user, first_name=first_name, last_name=last_name)
 
-            return user
+        return user
 
-    def create_user(self, email, password, **extra_fields):
-        return self._create_user(email, password, False, False, **extra_fields)
+    def create_user(self, email, first_name, last_name, password, **extra_fields):
+        return self._create_user(email, first_name, last_name, password, False, False, **extra_fields)
 
-    def create_superuser(self, email, password, **extra_fields):
-        return self._create_user(email, password, True, True, **extra_fields)
+    def create_superuser(self, email, first_name, last_name, password, **extra_fields):
+        return self._create_user(email, first_name, last_name, password, True, True, **extra_fields)
 
 
 class User(AbstractUser, PermissionsMixin):
@@ -37,11 +36,15 @@ class User(AbstractUser, PermissionsMixin):
     # Identify Information
     id = models.BigAutoField(primary_key=True)
     email = models.EmailField("Email Address", unique=True, blank=False, null=False)
+
+    first_name = None
+    last_name = None
     
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     objects = UserManager()
+
 
 class UserInformation(models.Model):
     # User foreign key to link the two models
@@ -85,6 +88,10 @@ class UserInformation(models.Model):
 
     # User current status [N,V,S]
     status = models.CharField(max_length=1, choices=Status.choices, default=Status.NEW)
+
+    # Set object name to email
+    def __str__(self):
+        return '-> ' + str(self.user)
     
 
 class EmailConfirmation(models.Model):
@@ -105,9 +112,7 @@ def password_reset_token_created(sender, instance, reset_password_token, *args, 
     msg.send()
 
 
-@receiver(post_save, sender=User)
-def create_user_information(sender, instance, created, **kwargs):
-    if created:
-        user_information = UserInformation.objects.filter(user=instance).first()
-        if user_information is None:
-            user_information = UserInformation.objects.create(user=instance)
+# @receiver(post_save, sender=User)
+# def create_user_information(sender, instance, created, **kwargs):
+#     if created:
+#         UserInformation.objects.get_or_create(user=instance)
