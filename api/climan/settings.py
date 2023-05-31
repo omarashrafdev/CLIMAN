@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import datetime
 import os
+from dotenv import load_dotenv
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -28,11 +29,12 @@ SECRET_KEY = 'django-insecure-%2#bq2&=1j_l!nojsvbfp8arxql9vm8zv%ek7xw&y^!(61ys&v
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    #'10.0.2.2',
     'localhost', 
     '127.0.0.1'
 ]
 
+# Read getenv variables
+load_dotenv()
 
 # Application definition
 
@@ -208,17 +210,17 @@ CORS_ALLOWED_ORIGIN_REGEXES = [
 
 # Email
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-DEFAULT_FROM_EMAIL = os.environ.get('EMAIL_HOST_USER')
-SERVER_EMAIL = os.environ.get('EMAIL_HOST_USER')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_HOST_USER')
+SERVER_EMAIL = os.getenv('EMAIL_HOST_USER')
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 
 
-BACKEND_DOMAIN = os.environ.get('BACKEND_DOMAIN')
-FRONTEND_DOMAIN = os.environ.get('FRONTEND_DOMAIN')
+BACKEND_DOMAIN = os.getenv('BACKEND_DOMAIN')
+FRONTEND_DOMAIN = os.getenv('FRONTEND_DOMAIN')
 
 # Settings for phone_verify
 # PHONE_VERIFICATION = {
