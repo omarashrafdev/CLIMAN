@@ -1,4 +1,4 @@
-# Engineering Requirements Document (ERD): CLIMAN
+# Engineering Requirements Document (ERD): CLIMAN (v 1.0)
 
 This document explores the design of CLIMAN, a clinic management tool 
 designed to connect doctors with their patients and other doctors
@@ -29,11 +29,6 @@ We'll need at least the following entities to implement the service:
 |         ID        |  STRING/UUID   |
 |       Email       |     STRING     |
 |      Password     |     STRING     |
-
-**UserInformation**:
-|       Column      |      Type      |
-|-------------------|----------------|
-|       UserId      |  STRING/UUID   |
 |     First name    |     STRING     |
 |     Last name     |     STRING     |
 |      Gender       |     STRING     |
@@ -45,11 +40,27 @@ We'll need at least the following entities to implement the service:
 |       Type        |     STRING     |
 |      Status       |     STRING     |
 |    RegisterDate   |      DATE      |
-|    PatientsIds    |  STRING/UUID   |
 - **Gender** [MALE (M), FEMALE (F)]
 - **City** [ALEXANDRIA (Alexandria), ASWAN (Aswan), ASYUT (Asyut), BEHEIRA (Beheira), BENI_SUEF (Beni Suef), CAIRO (Cairo), DAKAHLIA (Dakahlia), DAMIETTA (Damietta), FAIYUM (Faiyum), GHARBIA (Gharbia), GIZA (Giza), ISMAILIA (Ismailia), KAFR_EL_SHEIKH (Kafr El Sheikh), LUXOR (Luxor), MATRUH (Matruh), MINYA (Minya), MONUFIA (Monufia), NEW_VALLEY (New Valley), NORTH_SINAI (North Sinai), PORT_SAID (Port Said), QALYUBIA (Qalyubia), QENA (Qena), RED_SEA (Red Sea), SHARQIA (Sharqia), SOHAG (Sohag), SOUTH_SINAI (South Sinai), SUEZ (Suez)]
-- **Type** [DOCTOR (D), PATIENT (P)]
+- **Type** [DOCTOR (D), ADMIN (A)]
 - **Status** [NEW (N), VERIFIED (V), SUSPENDED (S)]
+
+**Patients**:
+|       Column      |      Type      |
+|-------------------|----------------|
+|       UserId      |  STRING/UUID   |
+|       Email       |     STRING     |
+|     First name    |     STRING     |
+|     Last name     |     STRING     |
+|      Gender       |     STRING     |
+|       Image       |      FILE      |
+|       Phone       |     NUMERIC    |
+|     Birthdate     |      DATE      |
+|      Address      |     STRING     |
+|       City        |     STRING     |
+|       Type        |     STRING     |
+|      Status       |     STRING     |
+|    RegisterDate   |      DATE      |
 
 **Appointments**
 |       Column      |      Type      |
@@ -62,22 +73,9 @@ We'll need at least the following entities to implement the service:
 |       Date        |      DATE      |
 |       Time        |   TIMESTAMP    |
 |      Status       |     STRING     |
-- **Status** [SCHEDULED (S), DONE (D), CANCELED (D)]
+- **Status** [SCHEDULED (S), DONE (D), CANCELED (C)]
 
-**AppointmentsRequests**
-|       Column      |      Type      |
-|-------------------|----------------|
-|        ID         |  STRING/UUID   |
-|     DoctorId      |  STRING/UUID   |
-|     PatientId     |  STRING/UUID   |
-|     Treatment     |     STRING     |
-|    Description    |     STRING     |
-|       Date        |      DATE      |
-|       Time        |   TIMESTAMP    |
-|      Status       |     STRING     |
-- **Status** [PENDING (P), ACCEPTED (A), DECLINED (D)]
-
-**PatientNotes**
+**Notes**
 |       Column      |      Type      |
 |-------------------|----------------|
 |        ID         |  STRING/UUID   |
@@ -87,7 +85,7 @@ We'll need at least the following entities to implement the service:
 |       Date        |      DATE      |
 |       Time        |   TIMESTAMP    |
 
-**PatientFiles**
+**Files**
 |       Column      |      Type      |
 |-------------------|----------------|
 |        ID         |  STRING/UUID   |
@@ -98,24 +96,6 @@ We'll need at least the following entities to implement the service:
 |       Date        |      DATE      |
 |       Time        |   TIMESTAMP    |
 
-**Conversations**
-|       Column      |      Type      |
-|-------------------|----------------|
-|        ID         |  STRING/UUID   |
-|     CreatedBy     |  STRING/UUID   |
-|    ReceiverID     |  STRING/UUID   |
-|     CreatedAt     |      DATE      |
-
-**Messages**
-|       Column      |      Type      |
-|-------------------|----------------|
-|        ID         |  STRING/UUID   |
-|  ConversationID   |  STRING/UUID   |
-|     SenderID      |  STRING/UUID   |
-|    ReceiverID     |  STRING/UUID   |
-|       Body        |     STRING     |
-|       Date        |      DATE      |
-|       Time        |   TIMESTAMP    |
 
 ## Server
 
@@ -127,70 +107,59 @@ A simple HTTP server is responsible for authentication, serving stored data, and
 ### Auth
 
 For v1, a simple JWT-based auth mechanism is to be used, with passwords
-encrypted and stored in the database. OAuth is to be added initially or later
-for Google + Facebook and maybe others.
+encrypted and stored in the database. OAuth is to be added initially or later for Google + Facebook and maybe others.
 
 ### API
 
 **Auth**:
 
 ```
-/signIn  [POST]
-/signUp  [POST]
+/signIn             [POST]    Login request using email and password
+/signUp             [POST]    Sign up request using basic user info
+/profile/complete   [PUT]     Complete user info after registration
 ```
 
 **Main**:
 
 ```
-/  [GET]
+/dashboard          [GET]     View dashboard elements and numbers
 ```
 
 **Patients**:
 
 ```
-/patients/list  [GET]
-/patients/:id  [GET]
+/patients/          [GET]     View all patients
+/patients/          [POST]    Add new patient record
+/patients/:id       [GET]     View patient info using id
+/patients/:id       [PUT]     Edit patient info using id
+/patients/:id       [DELETE]  Delete patient record using id
 ```
 
 **Appointments**:
 
 ```
-/appointments/list  [GET]
-/appointments/:id  [GET]
-/appointments/:id  [PUT]
+/appointments/      [GET]     View all appointments
+/appointments/      [POST]    Add new appointment record
+/appointments/:id   [GET]     View appointment info using id
+/appointments/:id   [PUT]     Edit appointment info using id
+/appointments/:id   [DELETE]  Delete appointment record using id
 ```
 
 **Notes**:
 
 ```
-/notes/:id  [GET]
-/notes/:id  [POST]
-/notes/:id  [PUT]
-/notes/:id  [DELETE]
+/notes/:id          [GET]     View patient notes using patient id
+/notes/:id          [POST]    Add new patient note using patient id
+/notes/:id          [PUT]     Edit patient note using note id
+/notes/:id          [DELETE]  Delete patient note using note id
 ```
 
 **Files**:
 
 ```
-/files/:id  [GET]
-/files/:id  [POST]
-/files/:id  [DELETE]
-```
-
-**Conversation**:
-
-```
-/conversation/:id  [GET]
-/conversation/:id  [POST]
-/conversation/:id  [PUT]
-```
-
-**Messages**:
-
-```
-/messages/:id  [GET]
-/messages/:id  [POST]
-/messages/:id  [DELETE]
+/files/:id          [GET]     View patient files using patient id
+/files/:id          [POST]    Add patient file using patient id
+/files/:id          [DELETE]  Delete patient file using patient id
 ```
 
 
