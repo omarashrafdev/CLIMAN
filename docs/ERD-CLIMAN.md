@@ -1,174 +1,139 @@
 # Engineering Requirements Document (ERD): CLIMAN (v 1.0)
 
-This document explores the design of CLIMAN, a clinic management tool 
-designed to connect doctors with their patients and other doctors
+CLIMAN is a sophisticated clinic management tool designed to streamline the collaboration between doctors, patients, and healthcare professionals. This document delves into the design and architecture of CLIMAN, focusing on empowering doctors to provide optimal patient care while managing clinic operations efficiently.
 
-We'll use a basic client/server architecture, where a single server is deployed
-on a cloud provider next to a relational database, and serving HTTP traffic from
-a public endpoint.
+## Purpose:
 
-## Storage
+CLIMAN aims to revolutionize clinic management by providing doctors with a user-friendly platform that facilitates seamless data sharing among healthcare professionals. The primary objectives include enhancing patient care, improving appointment management, and fostering effective collaboration among medical practitioners.
 
-We'll use a relational database (schema follows) to fast retrieval of posts and
-comments. A minimal database implementation such as sqlite3 suffices, although
-we can potentially switch to something with a little more power such as
-PostgreSql or MySql if necessary. Data will be stored on the server on a separate, backed
-up volume for resilience. There will be no replication or sharding of data at
-this early stage.
+## Architecture:
 
-We ruled out storage-as-a-service services such as Firestore and the like in
-order to showcase building a standalone backend for educational purposes.
+CLIMAN adopts a basic client/server architecture, deploying a single server on a cloud provider alongside a relational database. This server serves HTTP traffic from a public endpoint, ensuring accessibility and scalability.
 
-### Schema:
+## Database Schema:
 
-We'll need at least the following entities to implement the service:
+The relational database underpinning CLIMAN includes entities such as Users, Patients, Appointments, Notes, and Files. These entities capture critical information required for efficient clinic management.
 
-**Users**:
-|       Column      |      Type      |
-|-------------------|----------------|
-|         ID        |  STRING/UUID   |
-|       Email       |     STRING     |
-|      Password     |     STRING     |
-|     First name    |     STRING     |
-|     Last name     |     STRING     |
-|      Gender       |     STRING     |
-|       Image       |      FILE      |
-|       Phone       |     NUMERIC    |
-|     Birthdate     |      DATE      |
-|      Address      |     STRING     |
-|       City        |     STRING     |
-|       Type        |     STRING     |
-|      Status       |     STRING     |
-|    RegisterDate   |      DATE      |
+### Users:
+
+| Column          | Type          |
+| --------------- | ------------- |
+| ID              | STRING/UUID   |
+| Email           | STRING        |
+| Password        | STRING        |
+| First name      | STRING        |
+| Last name       | STRING        |
+| Gender          | STRING        |
+| Image           | FILE          |
+| Phone           | NUMERIC       |
+| Birthdate       | DATE          |
+| Address         | STRING        |
+| City            | STRING        |
+| Type            | STRING        |
+| Status          | STRING        |
+| RegisterDate    | DATE          |
+
 - **Gender** [MALE (M), FEMALE (F)]
-- **City** [ALEXANDRIA (Alexandria), ASWAN (Aswan), ASYUT (Asyut), BEHEIRA (Beheira), BENI_SUEF (Beni Suef), CAIRO (Cairo), DAKAHLIA (Dakahlia), DAMIETTA (Damietta), FAIYUM (Faiyum), GHARBIA (Gharbia), GIZA (Giza), ISMAILIA (Ismailia), KAFR_EL_SHEIKH (Kafr El Sheikh), LUXOR (Luxor), MATRUH (Matruh), MINYA (Minya), MONUFIA (Monufia), NEW_VALLEY (New Valley), NORTH_SINAI (North Sinai), PORT_SAID (Port Said), QALYUBIA (Qalyubia), QENA (Qena), RED_SEA (Red Sea), SHARQIA (Sharqia), SOHAG (Sohag), SOUTH_SINAI (South Sinai), SUEZ (Suez)]
+- **City** [List of Cities]
 - **Type** [DOCTOR (D), ADMIN (A)]
 - **Status** [NEW (N), VERIFIED (V), SUSPENDED (S)]
 
-**Patients**:
-|       Column      |      Type      |
-|-------------------|----------------|
-|       UserId      |  STRING/UUID   |
-|       Email       |     STRING     |
-|     First name    |     STRING     |
-|     Last name     |     STRING     |
-|      Gender       |     STRING     |
-|       Image       |      FILE      |
-|       Phone       |     NUMERIC    |
-|     Birthdate     |      DATE      |
-|      Address      |     STRING     |
-|       City        |     STRING     |
-|       Type        |     STRING     |
-|      Status       |     STRING     |
-|    RegisterDate   |      DATE      |
+### Patients:
 
-**Appointments**
-|       Column      |      Type      |
-|-------------------|----------------|
-|        ID         |  STRING/UUID   |
-|     DoctorId      |  STRING/UUID   |
-|     PatientId     |  STRING/UUID   |
-|     Treatment     |     STRING     |
-|    Description    |     STRING     |
-|       Date        |      DATE      |
-|       Time        |   TIMESTAMP    |
-|      Status       |     STRING     |
+| Column          | Type          |
+| --------------- | ------------- |
+| UserId          | STRING/UUID   |
+| Email           | STRING        |
+| First name      | STRING        |
+| Last name       | STRING        |
+| Gender          | STRING        |
+| Image           | FILE          |
+| Phone           | NUMERIC       |
+| Birthdate       | DATE          |
+| Address         | STRING        |
+| City            | STRING        |
+| Type            | STRING        |
+| Status          | STRING        |
+| RegisterDate    | DATE          |
+
+### Appointments:
+
+| Column          | Type          |
+| --------------- | ------------- |
+| ID              | STRING/UUID   |
+| DoctorId        | STRING/UUID   |
+| PatientId       | STRING/UUID   |
+| Treatment       | STRING        |
+| Description     | STRING        |
+| Date            | DATE          |
+| Time            | TIMESTAMP     |
+| Status          | STRING        |
+
 - **Status** [SCHEDULED (S), DONE (D), CANCELED (C)]
 
-**Notes**
-|       Column      |      Type      |
-|-------------------|----------------|
-|        ID         |  STRING/UUID   |
-|     DoctorId      |  STRING/UUID   |
-|     PatientId     |  STRING/UUID   |
-|    Description    |     STRING     |
-|       Date        |      DATE      |
-|       Time        |   TIMESTAMP    |
+### Notes:
 
-**Files**
-|       Column      |      Type      |
-|-------------------|----------------|
-|        ID         |  STRING/UUID   |
-|     DoctorId      |  STRING/UUID   |
-|     PatientId     |  STRING/UUID   |
-|     FileName      |     STRING     |
-|       Path        |      File      |
-|       Date        |      DATE      |
-|       Time        |   TIMESTAMP    |
+| Column          | Type          |
+| --------------- | ------------- |
+| ID              | STRING/UUID   |
+| DoctorId        | STRING/UUID   |
+| PatientId       | STRING/UUID   |
+| Description     | STRING        |
+| Date            | DATE          |
+| Time            | TIMESTAMP     |
 
+### Files:
 
-## Server
+| Column          | Type          |
+| --------------- | ------------- |
+| ID              | STRING/UUID   |
+| DoctorId        | STRING/UUID   |
+| PatientId       | STRING/UUID   |
+| FileName        | STRING        |
+| Path            | FILE          |
+| Date            | DATE          |
+| Time            | TIMESTAMP     |
 
-A simple HTTP server is responsible for authentication, serving stored data, and potentially ingesting and serving analytics data.
+## Authentication and API:
 
-- Django is selected for implementing the server for speed of development.
-- Rest Framework is the web server framework.
+### Auth:
 
-### Auth
+In version 1, CLIMAN implements a JWT-based authentication mechanism for user login and registration. Passwords are encrypted and stored in the database. OAuth integration for platforms like Google and Facebook is a potential enhancement for future releases.
 
-For v1, a simple JWT-based auth mechanism is to be used, with passwords
-encrypted and stored in the database. OAuth is to be added initially or later for Google + Facebook and maybe others.
+#### API Endpoints:
 
-### API
+- `/signIn` [POST]: Initiates login using email and password.
+- `/signUp` [POST]: Facilitates user registration with basic information.
+- `/profile/complete` [PUT]: Enables the completion of user information after registration.
 
-**Auth**:
+### Main:
 
-```
-/signIn             [POST]    Login request using email and password
-/signUp             [POST]    Sign up request using basic user info
-/profile/complete   [PUT]     Complete user info after registration
-```
+- `/dashboard` [GET]: Retrieves elements and numeric summaries for the user's dashboard.
 
-**Main**:
+### Patients:
 
-```
-/dashboard          [GET]     View dashboard elements and numbers
-```
+- `/patients/` [GET]: Fetches all patients.
+- `/patients/` [POST]: Adds a new patient record.
+- `/patients/:id` [GET]: Retrieves patient information using ID.
+- `/patients/:id` [PUT]: Edits patient information using ID.
+- `/patients/:id` [DELETE]: Deletes a patient record using ID.
 
-**Patients**:
+### Appointments:
 
-```
-/patients/          [GET]     View all patients
-/patients/          [POST]    Add new patient record
-/patients/:id       [GET]     View patient info using id
-/patients/:id       [PUT]     Edit patient info using id
-/patients/:id       [DELETE]  Delete patient record using id
-```
+- `/appointments/` [GET]: Retrieves all appointments.
+- `/appointments/` [POST]: Adds a new appointment record.
+- `/appointments/:id` [GET]: Retrieves appointment information using ID.
+- `/appointments/:id` [PUT]: Edits appointment information using ID.
+- `/appointments/:id` [DELETE]: Deletes an appointment record using ID.
 
-**Appointments**:
+### Notes:
 
-```
-/appointments/      [GET]     View all appointments
-/appointments/      [POST]    Add new appointment record
-/appointments/:id   [GET]     View appointment info using id
-/appointments/:id   [PUT]     Edit appointment info using id
-/appointments/:id   [DELETE]  Delete appointment record using id
-```
+- `/notes/:id` [GET]: Retrieves patient notes using patient ID.
+- `/notes/:id` [POST]: Adds new patient notes using patient ID.
+- `/notes/:id` [PUT]: Edits patient notes using note ID.
+- `/notes/:id` [DELETE]: Deletes patient notes using note ID.
 
-**Notes**:
+### Files:
 
-```
-/notes/:id          [GET]     View patient notes using patient id
-/notes/:id          [POST]    Add new patient note using patient id
-/notes/:id          [PUT]     Edit patient note using note id
-/notes/:id          [DELETE]  Delete patient note using note id
-```
-
-**Files**:
-
-```
-/files/:id          [GET]     View patient files using patient id
-/files/:id          [POST]    Add patient file using patient id
-/files/:id          [DELETE]  Delete patient file using patient id
-```
-
-
-## Clients
-
-For now we'll start with a single web client, possibly adding mobile clients later.
-
-- The web client will be implemented in React.js.
-- See Figma/screenshots for details.
-- API server will serve a static bundle of the React app.
-- Uses ReactQuery to talk to the backend.
-- Uses Chakra UI for building the CSS components.
+- `/files/:id` [GET]: Retrieves patient files using patient ID.
+- `/files/:id` [POST]: Adds patient files using patient ID

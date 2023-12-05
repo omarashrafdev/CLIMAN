@@ -1,33 +1,27 @@
 # Product Requirements Document (PRD): CLIMAN (v 1.0)
 
-CLIMAN is a clinic management tool designed to enable doctors to help their patients through sharing their patients data with other doctors.
-It also allows doctors and patients to manage their appointments.
+CLIMAN revolutionizes clinic management, empowering doctors to deliver superior patient care by facilitating seamless data sharing among healthcare professionals. Additionally, it provides robust appointment management capabilities for both doctors and patients.
 
-# Experience: Doctors
+## Experience: Doctors
 
-## Dashboard
+### Dashboard
 
-The main page of site is the dashboard and it has some graphs and total numbers (Appointments - Requests - Patients - Rating - Payment)
+The central hub of CLIMAN is its dynamic dashboard, featuring insightful graphs and key metrics, including Appointments, Requests, Patients, Ratings, and Payment summaries. Users seamlessly transition from the public home page to their personalized dashboard upon signing in.
 
-Without signing in, users will get the public home page. After signing in, users can view their dashboard.
+### Patient List
 
-## Patient List
+CLIMAN hosts a comprehensive patient list tailored for each viewing doctor. Patient profiles showcase essential details such as name, email, picture, next appointment date, last appointment date, and registration date. The list supports efficient search and sorting by name and various dates. Individual patient pages offer a detailed overview of their associated information.
 
-The site will contain a list of all patients associated with the doctor viewing the page, each patient showing up with his name, email, picture, next appointment date, last appointment date, register date. 
+### Appointments
 
-The list has search by name, email, and phone number. The list has sorting by name and different dates. Each patient has his own page that contain all the information associated to his account.
+Effortless appointment management is at the core of CLIMAN. Doctors can effortlessly access and navigate through their appointments list, featuring patient names, treatment details, date & time, and last visit information. The list supports intuitive search, sorting, and filtering options, ensuring a personalized and efficient scheduling experience. Each appointment has a dedicated page, consolidating all pertinent information.
 
-## Appointments
+### Settings
 
-Users can view their appointments list for all the patients associated with the doctor viewing the page that contains patient name, treatment, date & time, and last visit.
+CLIMAN empowers users to tailor their experience through the Settings section, offering essential functionalities:
+- **Change Password:** Ensure account security with password updates.
+- **Change Email:** Seamlessly modify the registered email address.
+- **Edit Profile Information:** Customize and update profile details.
+- **Disable Account:** Temporarily deactivate the CLIMAN account if needed.
 
-The list has search by name, email, and phone number. The list has sorting by name and different dates. The list has filtering by treatment and specific date range. Each appointment has his own page that contain all the information associated to this appointment.
-
-
-## Settings
-
-Users can view their profile settings which contain 
-- Change password
-- Change email
-- Edit profile information
-- Disable Account
+CLIMAN's user-centric design and feature-rich interface redefine clinic management, providing doctors with an intuitive and powerful tool to enhance patient care and streamline administrative tasks.
