@@ -23,16 +23,14 @@ import {
   AlertIcon,
   AlertTitle,
 } from "@chakra-ui/react";
-import { OAuthButtonGroup } from "../../components/OAuthButtonGroup";
+import { OAuthButtonGroup } from "../components/OAuthButtonGroup";
 import { useState, useRef, useContext } from "react";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { useNavigate } from "react-router-dom"
-import AuthContext from "../../context/AuthContext";
 
-export default function Login() {
+export function Login() {
   const navigate = useNavigate();
 
-  let {loginUser} = useContext(AuthContext)
 
   const { isOpen, onToggle } = useDisclosure();
   const inputRef = useRef(null);
