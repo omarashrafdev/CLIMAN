@@ -1,232 +1,115 @@
 import {
-  Image,
   Box,
   Button,
   Link,
-  Checkbox,
   Container,
-  Divider,
+  Flex,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Heading,
-  HStack,
   Input,
-  Stack,
   Text,
-  Center,
-  IconButton,
-  InputGroup,
-  InputRightElement,
-  useDisclosure,
-  useMergeRefs,
-  Alert,
-  AlertIcon,
-  AlertTitle,
 } from "@chakra-ui/react";
-import { OAuthButtonGroup } from "../components/OAuthButtonGroup";
-import { useState, useRef, useContext } from "react";
-import { HiEye, HiEyeOff } from "react-icons/hi";
-import { useNavigate } from "react-router-dom"
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '../store/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+
+const initialValues = {
+  email: '',
+  password: '',
+};
+
+const validationSchema = Yup.object().shape({
+  email: Yup.string().email('Invalid email address').required('Email is required.'),
+  password: Yup.string().required('Password is required.'),
+});
 
 export function Login() {
+  const { loading, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-
-  const { isOpen, onToggle } = useDisclosure();
-  const inputRef = useRef(null);
-  const mergeRef = useMergeRefs(inputRef);
-  const onClickReveal = () => {
-    onToggle();
-    if (inputRef.current) {
-      inputRef.current.focus({
-        preventScroll: true,
-      });
-    }
-  };
-
-  const [err, setErr] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  // Errors vars
-  const [emailBlankError, setEmailBlankError] = useState(false);
-  const [passwordBlankError, setPasswordBlankError] = useState(false);
-
-  async function handleSubmit(event) {
-    event.preventDefault();
-    
-    // Reset Errors
-    setErr("");
-    setEmailBlankError(false);
-    setPasswordBlankError(false);
-    
-    if (email == "") {
-        setEmailBlankError(true);
-        return;
+  const formik = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: async (values) => {
+      try {
+        await dispatch(loginUser(values));
+        setEmail('');
+        setPassword('');
+        navigate('/');
+      } catch (error) {
+        // Handle login error
       }
-      if (password == "") {
-          setPasswordBlankError(true);
-      return;
-    }
-    
-    const response = await loginUser(event, email, password)
+    },
+  });
 
-    if(response.status == 200) {
-      navigate('/')
-    }
-    else if (response.status == 401) {
-      setErr(response.message)
-    }
-  }
+  const { values, handleBlur, handleChange, handleSubmit } = formik;
+
 
   return (
     <Container
-      maxW="lg"
-      py={{
-        base: "12",
-        md: "24",
-      }}
-      px={{
-        base: "0",
-        sm: "8",
-      }}
+      display={'flex'}
+      flexDir={'column'}
+      justifyContent={'center'}
+      alignItems={'center'}
+      h="80vh"
     >
-      <Stack spacing="8">
-        <Stack spacing="6">
-          <Center>
-            <Image boxSize="75px" src="./clinic.png" alt="Logo" />
-          </Center>
-          <Stack
-            spacing={{
-              base: "2",
-              md: "3",
-            }}
-            textAlign="center"
-          >
-            <Heading
-              size={{
-                base: "xl",
-              }}
-            >
-              Log in to your account
-            </Heading>
-            <HStack spacing="1" justify="center">
-              <Text color="muted">Don't have an account?</Text>
-              <Link href="/register" textColor="blue">
-                Sign up
-              </Link>
-            </HStack>
-          </Stack>
-        </Stack>
-        <Box
-          py={{
-            base: "0",
-            sm: "8",
-          }}
-          px={{
-            base: "4",
-            sm: "10",
-          }}
-          bg={{
-            base: "transparent",
-            sm: "bg-surface",
-          }}
-          boxShadow={{
-            base: "none",
-            sm: "md",
-          }}
-          borderRadius={{
-            base: "none",
-            sm: "xl",
-          }}
-        >
-          <Stack spacing="6">
-            {err && (
-              <Alert status="error" textAlign="center">
-                <AlertIcon />
-                <AlertTitle>{err}</AlertTitle>
-              </Alert>
-            )}
-            <Stack spacing="5">
-              {
-                // Email Input Field
-              }
-              <FormControl>
-                <FormLabel htmlFor="email">Email</FormLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  onChange={(e) => {
-                    setEmail(e.target.value);
-                  }}
-                  borderColor={emailBlankError ? "red" : "inherit"}
-                  required
-                />
-                {emailBlankError && <Text color="red">Email is required</Text>}
-              </FormControl>
+      <Box
+        p={8}
+        maxW={'400px'}
+        w={'full'}
+        bg={'white'}
+        boxShadow={'md'}
+        rounded={'md'}
+        textAlign={'center'}
+      >
+        <Heading color={'blue.400'}>CLIMAN</Heading>
+        <Text>Login to continue</Text>
+        <form onSubmit={handleSubmit}>
+          <FormControl isInvalid={formik.touched.email && formik.errors.email} mb={4} size="md">
+            <FormLabel>Email</FormLabel>
+            <Input
+              name="email"
+              type="email"
+              value={values.email}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              size="md"
+            />
+            <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
+          </FormControl>
 
-              {
-                // Password Input Field
-              }
-              <FormControl>
-                <FormLabel htmlFor="password">Password</FormLabel>
-                <InputGroup>
-                  <InputRightElement>
-                    <IconButton
-                      variant="link"
-                      aria-label={isOpen ? "Mask password" : "Reveal password"}
-                      icon={isOpen ? <HiEyeOff /> : <HiEye />}
-                      onClick={onClickReveal}
-                    />
-                  </InputRightElement>
-                  <Input
-                    id="password"
-                    ref={mergeRef}
-                    name="password"
-                    onChange={(e) => {
-                      setPassword(e.target.value);
-                    }}
-                    type={isOpen ? "text" : "password"}
-                    borderColor={passwordBlankError ? "red" : "inherit"}
-                    autoComplete="current-password"
-                    required
-                  />
-                </InputGroup>
-                {passwordBlankError && (
-                  <Text color="red">Password is required</Text>
-                )}
-              </FormControl>
-            </Stack>
+          <FormControl isInvalid={formik.touched.password && formik.errors.password} mb={4} size="md">
+            <FormLabel>Password</FormLabel>
+            <Input
+              name="password"
+              type="password"
+              value={values.password}
+              onChange={handleChange}
+              onBlur={handleBlur}
+              size="md"
+            />
+            <FormErrorMessage>{formik.errors.password}</FormErrorMessage>
+          </FormControl>
 
-            {
-              // Remember me option + Forget password redirect
-            }
-            <HStack justify="space-between">
-              <Checkbox defaultChecked>Remember me</Checkbox>
-              <Link href="/forget-password" textColor="blue" size="sm">
-                Forgot password?
-              </Link>
-            </HStack>
+          <Button type="submit" colorScheme="blue" size="md"  width="full"  mb={4}>
+            {'Login'}
+          </Button>
+        </form>
 
-            {
-              // Sign in options
-            }
-            <Stack spacing="6">
-              <Button onClick={handleSubmit} type="submit">
-                Sign In
-              </Button>
-              <HStack>
-                <Divider />
-                <Text fontSize="sm" whiteSpace="nowrap" color="muted">
-                  or continue with
-                </Text>
-                <Divider />
-              </HStack>
-              <OAuthButtonGroup />
-            </Stack>
-          </Stack>
-        </Box>
-      </Stack>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Link color={"blue.500"} href="/register" textAlign="left">
+            Create an account
+          </Link>
+          <Link color={"blue.500"} href="/" textAlign="right">
+            Can't Login
+          </Link>
+        </Flex>
+      </Box>
     </Container>
   );
 }
